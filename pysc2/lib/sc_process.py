@@ -58,7 +58,7 @@ class StarcraftProcess(object):
     self._sock = None
     self._controller = None
     self._tmp_dir = tempfile.mkdtemp(prefix="sc-", dir=run_config.tmp_dir)
-    self._port = portpicker.pick_unused_port()
+    self._port = 5000 #portpicker.pick_unused_port()
     self._check_exists(run_config.exec_path)
 
     args = [
@@ -70,7 +70,7 @@ class StarcraftProcess(object):
         "-displayMode", "1" if full_screen else "0",
     ]
     try:
-      self._proc = self._launch(run_config, args, **kwargs)
+      # self._proc = self._launch(run_config, args, **kwargs)
       self._sock = self._connect(self._port)
       client = protocol.StarcraftProtocol(self._sock)
       self._controller = remote_controller.RemoteController(client)
@@ -135,7 +135,7 @@ class StarcraftProcess(object):
       logging.info("Connection attempt %s", i)
       time.sleep(1)
       try:
-        return websocket.create_connection("ws://127.0.0.1:%s/sc2api" % port,
+        return websocket.create_connection("ws://172.30.0.101:%s/sc2api" % port,
                                            timeout=2 * 60)  # 2 minutes
       except socket.error:
         pass  # SC2 hasn't started listening yet.
@@ -155,7 +155,8 @@ class StarcraftProcess(object):
 
   @property
   def running(self):
-    return self._proc.poll() if self._proc else False
+    return True
+#    return self._proc.poll() if self._proc else False
 
 
 def _shutdown_proc(p, timeout):
